@@ -1,0 +1,153 @@
+//-----------------PASO 1---------------------//
+mongod --dbpath "C:\MongoDB\data\db"
+
+//-----------------CREAR BASE DE DATOS---------------------//
+use ecommerce
+
+//-----------------INSERTAR 10 DOCUMENTOS EN LA COLECCION MENSAJES---------------------//
+db.mensajes.insertMany([
+    {
+      email: 'maria@gmail.com',
+      mensaje: 'Hola buenos dias..',      
+      fecha: new Date(),
+    },{
+        email: 'pedro@gmail.com',
+        mensaje: 'bienvenidos a todos y todas',      
+        fecha: new Date(),
+      },{
+        email: 'juan@gmail.com',
+        mensaje: 'Hola mi nombre es Juan',      
+        fecha: new Date(),
+      },{
+        email: 'jose@gmail.com',
+        mensaje: 'Hola soy Jose',      
+        fecha: new Date(),
+      },{
+        email: 'pepe@gmail.com',
+        mensaje: 'Hola soy developer',      
+        fecha: new Date(),
+      },{
+        email: 'roberto@gmail.com',
+        mensaje: 'Hola buenos dias..',      
+        fecha: new Date(),
+      },{
+        email: 'maximo@gmail.com',
+        mensaje: 'Hola buenos dias..me llamo maximo y me dicen maxi',      
+        fecha: new Date(),
+      },{
+        email: 'cursocoder@gmail.com',
+        mensaje: 'Hola buenos dias..soy el profesor que dicta la clase',      
+        fecha: new Date(),
+      },{
+        email: 'tutor1@gmail.com',
+        mensaje: 'Hola buenos dias..soy el tutor 1 y voy a estar atendiendo consultas del chat',      
+        fecha: new Date(),
+      },{
+        email: 'tutor2@gmail.com',
+        mensaje: 'estoy designado a corregir los desafios del curso',      
+        fecha: new Date(),
+      },{
+        email: 'tutor3@gmail.com',
+        mensaje: 'Buenas, estoy tambien en el chat junto al tutor1 ante cualquier duda',      
+        fecha: new Date(),
+      },
+  ]);
+
+  //-----------------INSERTAR 10 DOCUMENTOS EN LA COLECCION PRODUCTOS---------------------//
+
+  db.productos.insertMany([
+    {
+      nombre: 'producto 1',
+      precio: 550,      
+      url: 'http://wwww.images.com/public/image.jpg'      
+    },{
+        nombre: 'producto 2',
+        precio: 5000,      
+        url: 'http://wwww.images.com/public/image.jpg'      
+      },{
+        nombre: 'producto 3',
+        precio: 3250,      
+        url: 'http://wwww.images.com/public/image.jpg'      
+      },{
+        nombre: 'producto 4',
+        precio: 2433,      
+        url: 'http://wwww.images.com/public/image.jpg'      
+      },{
+        nombre: 'producto 5',
+        precio: 150,      
+        url: 'http://wwww.images.com/public/image.jpg'      
+      },{
+        nombre: 'producto 6',
+        precio: 4550,      
+        url: 'http://wwww.images.com/public/image.jpg'      
+      },{
+        nombre: 'producto 7',
+        precio: 1550,      
+        url: 'http://wwww.images.com/public/image.jpg'      
+      },{
+        nombre: 'producto 8',
+        precio: 1350,      
+        url: 'http://wwww.images.com/public/image.jpg'      
+      },{
+        nombre: 'producto 9',
+        precio: 3850,      
+        url: 'http://wwww.images.com/public/image.jpg'      
+      },{
+        nombre: 'producto 10',
+        precio: 933,      
+        url: 'http://wwww.images.com/public/image.jpg'      
+      }
+  ]);
+
+  //-----------------LISTAS MENSAJES Y PRODUCTOS---------------------//
+  db.mensajes.find({})
+  db.productos.find({})
+
+  //-----------------CONTAR DOCUMENTOS EN LAS COLECCIONES---------------------//
+  db.mensajes.countDocuments()
+  db.productos.countDocuments()
+
+  //-----------------INSERTAR 1 DOCUMENTOS EN LA COLECCION PRODUCTOS---------------------//
+  db.productos.insertOne({
+    nombre: 'producto agregado crud',
+    precio: 4899,      
+    url: 'http://wwww.images.com/public/image.jpg'      
+  });
+
+  //-----------------LISTAR LOS PRODUCTOS CON PRECIO MENOR A 1000---------------------//
+  db.productos.find({ precio: { $lte: 1000 } }).pretty()
+//-----------------LISTAR LOS PRODUCTOS CON PRECIO ENTRE 1000 Y 3000---------------------//
+  db.productos.find({ $and: [{ precio: { $gte: 1000 } }, { precio: { $lte: 3000 } }] })
+  //-------LISTAR LOS PRODUCTOS CON PRECIO MAYOR A 3000---------------------//
+  db.productos.find({ precio: { $gte: 3000 } }).pretty()
+//-------MOSTRAR EL NOMBRE DEL 3ER. PRODUCTO CON PRECIO MAS BARATO---------------------//
+  db.productos.find({}, { nombre: 1, _id: 0 }).sort({ precio: 1 }).skip(2).limit(1)
+//-------ACTUALIZAR TODOS LOS PRODUCTOS AGREGANDO STOCK EN 100---------------------//
+  db.productos.updateMany({ }, { $set: { stock: 100 } });
+//-------ACTUALIZAR TODOS LOS PRODUCTOS A STOCK EN 0 CON PRECIO MAYOR A 4000 --------------//
+  db.productos.updateMany({ precio: { $gte: 4000 } }, { $set: { stock: 0 } });
+//-------ELIMINAR TODOS LOS PRODUCTOS  CON PRECIO MENOR A 1000 --------------//
+  db.productos.deleteMany({ precio: { $lte: 1000 } })
+
+  //-------CREAR USUARIO DE SOLO LECTURA Y REINICIAR BASE DE DATOS CON CONFI AUTH --------------//
+  use admin
+
+  db.createUser({
+    user: 'pepe',
+    pwd: 'asd456',
+    roles: [
+      { role: 'read', db: 'ecommerce' },
+    ]
+  })
+
+  db.system.users.find()
+
+  mongod --auth --dbpath "C:\MongoDB\data\db"
+
+  mongosh -u 'pepe' -p 'asd456'
+
+  db.productos.insertOne({
+    nombre: 'producto agregado crud',
+    precio: 4899,      
+    url: 'http://wwww.images.com/public/image.jpg'      
+  });
